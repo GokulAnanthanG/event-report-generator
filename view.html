@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Report Generator</title>
+    <link rel="stylesheet" href="./assets/css/view.css" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="box1">
+        <p class="logo">Event Report Generator</p>
+      </div>
+      <div class="box2">
+        <ul class="menu">
+          <li>
+            <a href="add.html"><i class="fa fa-plus"></i>&nbsp;Add</a>
+          </li>
+          <li>
+            <a href="view.html"><i class="fa fa-eye"></i>&nbsp;View</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main>
+      <section class="topSection">
+        <input type="text" id="search" placeholder="Date || Event" />
+        &nbsp;
+        <button id="displayAll" title="display all">
+          <i class="fa fa-arrow-down"></i>
+        </button>
+      </section>
+      <section class="container"></section>
+    </main>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.0/html2pdf.bundle.min.js"
+      integrity="sha512-w3u9q/DeneCSwUDjhiMNibTRh/1i/gScBVp2imNVAMCt6cUHIw6xzhzcPFIaL3Q1EbI2l+nu17q2aLJJLo4ZYg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      function ExportToPdf(element, filename) {
+        var el = document.getElementById(element);
+        var opt = {
+          margin: 1,
+          filename: filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+
+        // New Promise-based usage:
+        html2pdf(el, opt);
+      }
+      function ExportToDoc(element, filename = "") {
+        var header =
+          "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+
+        var footer = "</body></html>";
+        var html = header + document.getElementById(element).innerHTML + footer;
+
+        var blob = new Blob(["\ufeff", html], {
+          type: "application/msword",
+        });
+
+        // Specify link url
+        var url =
+          "data:application/vnd.ms-word;charset=utf-8," +
+          encodeURIComponent(html);
+
+        // Specify file name
+        filename = filename ? filename + ".docx" : "document.docx";
+
+        // Create download link element
+        var downloadLink = document.createElement("a");
+
+        document.body.appendChild(downloadLink);
+
+        if (navigator.msSaveOrOpenBlob) {
+          navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+          // Create a link to the file
+          downloadLink.href = url;
+
+          // Setting the file name
+          downloadLink.download = filename;
+
+          //triggering the function
+          downloadLink.click();
+        }
+
+        document.body.removeChild(downloadLink);
+      }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://www.jqueryscript.net/demo/Export-Html-To-Word-Document-With-Images-Using-jQuery-Word-Export-Plugin/FileSaver.js"></script>
+    <script src="https://www.jqueryscript.net/demo/Export-Html-To-Word-Document-With-Images-Using-jQuery-Word-Export-Plugin/jquery.wordexport.js"></script>
+    <script type="text/javascript"></script>
+    <script>
+      $(document).ready(() => {
+        $("#displayAll").click(() => {
+          $.ajax({
+            method: "get",
+            url: "./assets/php/displayAll.php",
+            success: (data) => {
+              if (data != 0) {
+                data = JSON.parse(data);
+                render(data);
+              } else if (data == 0) alert("no events");
+              else alert("failed to get events");
+            },
+            error: (err) => {
+              alert("oops something went wrong " + err.statusText);
+              console.log(err);
+            },
+          });
+        }); //btn
+        //
+        function render(data) {
+          $(".container").empty();
+          data.forEach((event, i) => {
+            var imageStatus = new Array(
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            );
+            //condition check
+            if (String(event.image1).length > 1) {
+              imageStatus[0] = true;
+            }
+            if (String(event.image2).length > 1) {
+              imageStatus[1] = true;
+            }
+            if (String(event.image3).length > 1) {
+              imageStatus[2] = true;
+            }
+            if (String(event.image4).length > 1) {
+              imageStatus[3] = true;
+            }
+            if (String(event.image5).length > 1) {
+              imageStatus[4] = true;
+            }
+            if (String(event.image6).length > 1) {
+              imageStatus[5] = true;
+            }
+
+            var mainElement = document.createElement("section");
+
+            if (
+              imageStatus[0] == true &&
+              imageStatus[1] == false &&
+              imageStatus[2] == false &&
+              imageStatus[3] == false &&
+              imageStatus[4] == false &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+              <center>
+                <img  class="reportImage"  src='./assets/php/files/${event.image1}'>
+                </center>
+
+               
+              </div>
+            `;
+            } else if (
+              imageStatus[0] == true &&
+              imageStatus[1] == true &&
+              imageStatus[2] == false &&
+              imageStatus[3] == false &&
+              imageStatus[4] == false &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+                <center>
+                  <img class="reportImage" src='./assets/php/files/${event.image1}'>
+                <img class="reportImage" src='./assets/php/files/${event.image2}'>
+                  </center>
+              </div>
+            `;
+            } else if (
+              imageStatus[0] == true &&
+              imageStatus[1] == true &&
+              imageStatus[2] == true &&
+              imageStatus[3] == false &&
+              imageStatus[4] == false &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+               <center>
+                <img class="reportImage"  src='./assets/php/files/${event.image1}'>
+                <img class="reportImage"  src='./assets/php/files/${event.image2}'>
+                <img class="reportImage"  src='./assets/php/files/${event.image3}'></center>
+              </div>
+            `;
+            }
+            if (
+              imageStatus[0] == true &&
+              imageStatus[1] == true &&
+              imageStatus[2] == true &&
+              imageStatus[3] == true &&
+              imageStatus[4] == false &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+               <center> <img class="reportImage" src='.assets/php/files/${event.image1}'>
+                <img class="reportImage" src='../assets/php/files/${event.image2}'>
+                <img class="reportImage" src='../assets/php/files/${event.image3}'>
+                <img class="reportImage" src='../assets/php/files/${event.image4}'></center>
+              </div>
+            `;
+            }
+            if (
+              imageStatus[0] == true &&
+              imageStatus[1] == true &&
+              imageStatus[2] == true &&
+              imageStatus[3] == true &&
+              imageStatus[4] == true &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+               <center> <img class="reportImage" src='./assets/php/files/${event.image1}'>
+                <img class="reportImage" src='./assets/php/files/${event.image2}'>
+                <img class="reportImage" src='./assets/php/files/${event.image3}'>
+                <img class="reportImage" src='./assets/php/files/${event.image4}'>
+                <img class="reportImage" src='./assets/php/files/${event.image5}'></center>
+              </div>
+            `;
+            }
+            if (
+              imageStatus[0] == true &&
+              imageStatus[1] == true &&
+              imageStatus[2] == true &&
+              imageStatus[3] == true &&
+              imageStatus[4] == true &&
+              imageStatus[5] == true
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                <br>
+               <center> <img class="reportImage" src='./assets/php/files/${event.image1}'>
+                <img class="reportImage" src='./assets/php/files/${event.image2}'>
+                <img class="reportImage" src='./assets/php/files/${event.image3}'>
+                <img class="reportImage" src='./assets/php/files/${event.image4}'>
+                <img class="reportImage" src='./assets/php/files/${event.image5}'></center>
+                <img class="reportImage" src='./assets/php/files/${event.image6}'>
+              </div>
+            `;
+            } //end condition check
+
+            $(".container").append(mainElement);
+          });
+        }
+        //
+        //keyup
+        $("#search").keyup(() => {
+          $.ajax({
+            method: "POST",
+            url: "./assets/php/keyup.php",
+            data: { key: $("#search").val() },
+            success: (data) => {
+              if (data != 0) {
+                data = JSON.parse(data);
+                render(data);
+              } else if (data == 0) alert("no events");
+              else alert("failed to get events");
+            },
+            error: (err) => {
+              alert("oops something went wrong " + err.statusText);
+              console.log(err);
+            },
+          });
+        });
+
+        //delete
+        $(document).on("click", ".delete", function () {
+          if (confirm("Are you sure ?")) {
+            var delId = $(this).attr("repId");
+            $.ajax({
+              type: "POST",
+              url: "./assets/php/delete.php",
+              data: { id: delId },
+              success: (data) => {
+                if (data == 1) {
+                  alert("Event Removed");
+                  location.reload();
+                } else {
+                  alert("failed to delete event");
+                }
+              },
+              error: (err) => {
+                alert("oops seomthing went wrong ", err.statusText);
+                console.log(err);
+              },
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

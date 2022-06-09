@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Report Generator</title>
+    <link rel="stylesheet" href="./assets/css/add.css" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav>
+      <div class="box1">
+        <p class="logo">Event Report Generator</p>
+      </div>
+      <div class="box2">
+        <ul class="menu">
+          <li>
+            <a href="add.html"><i class="fa fa-plus"></i>&nbsp;Add</a>
+          </li>
+          <li>
+            <a href="view.html"><i class="fa fa-eye"></i>&nbsp;View</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main>
+      <section class="container">
+        <h2>Add Event&nbsp;<i class="fa fa-calendar"></i></h2>
+        <hr />
+        <br />
+        <form id="frm">
+          <div class="col">
+            <div class="form-control">
+              <label for="program">Program</label><br />
+              <input
+                type="text"
+                autocomplete="off"
+                name="program"
+                id="program"
+              />
+            </div>
+            <div class="form-control">
+              <label for="date">Date</label><br />
+              <input type="date" autocomplete="off" name="date" id="date" />
+            </div>
+            <div class="form-control">
+              <label for="noOfStudents">No Of Students Participated</label
+              ><br />
+              <input
+                type="number"
+                autocomplete="off"
+                name="noOfStudents"
+                id="noOfStudents"
+              />
+            </div>
+          </div>
+          <!--col-->
+          <div class="col">
+            <div class="form-control">
+              <label for="guest">Guest</label><br />
+              <input type="text" autocomplete="off" name="guest" id="guest" />
+            </div>
+            <div class="form-control">
+              <label for="organized">Organized by</label><br />
+              <input
+                type="text"
+                autocomplete="off"
+                name="organized"
+                id="organized"
+              />
+            </div>
+            <div class="form-control">
+              <label for="scheme">Scheme</label><br />
+              <input type="text" autocomplete="off" name="scheme" id="scheme" />
+            </div>
+          </div>
+          <!--col-->
+
+          <!--col-->
+          <div class="col">
+            <div class="form-control">
+              <label for="topic">Topic</label><br />
+              <input type="text" autocomplete="off" name="topic" id="topic" />
+            </div>
+            <div class="form-control">
+              <label for="summary">Summary</label><br />
+              <textarea
+                name="summary"
+                id="summary"
+                cols="30"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="form-control">
+              <label for="image1">Image 1</label>
+              <input type="file" name="image1" id="image1" />
+            </div>
+          </div>
+          <!--col-->
+          <div class="col">
+            <div class="form-control">
+              <label for="image2">Image 2</label>
+              <input type="file" name="image2" id="image2" />
+            </div>
+
+            <div class="form-control">
+              <label for="image3">Image 3</label>
+              <input type="file" name="image3" id="image3" />
+            </div>
+
+            <div class="form-control">
+              <label for="image4">Image 4</label>
+              <input type="file" name="image4" id="image4" />
+            </div>
+          </div>
+          <!--cols-->
+          <div class="col">
+            <div class="form-control">
+              <label for="image5">Image 5</label>
+              <input type="file" name="image5" id="image5" />
+            </div>
+            <div class="form-control">
+              <label for="image6">Image 6</label>
+              <input type="file" name="image6" id="image6" />
+            </div>
+            <div class="form-control">
+              <label for="file">Import</label><br />
+              <label for="file" id="import"><i class="fa fa-file"></i></label>
+              <i class="fileName"></i>
+            </div>
+          </div>
+        </form>
+        <br />
+        <center>
+          <button class="addBtn"><i class="fa fa-plus"></i> Add</button>
+        </center>
+        <input style="visibility: hidden" type="file" id="file" name="file" />
+      </section>
+    </main>
+    <!--cdns-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        $(".addBtn").click(() => {
+          if ($("#file").val() == "") {
+            if (
+              $("#program").val() != "" &&
+              $("#date").val() != "" &&
+              $("#noOfStudents").val() != "" &&
+              $("#guest").val() != "" &&
+              $("#organized").val() != "" &&
+              $("#scheme").val() != "" &&
+              $("#topic").val() != ""
+            ) {
+              $(".addBtn").html("Loading...");
+              //
+              var formdata1 = new FormData();
+              formdata1.append("program", $("#program").val());
+              formdata1.append("date", $("#date").val());
+              formdata1.append("noOfStudents", $("#noOfStudents").val());
+              formdata1.append("guest", $("#guest").val());
+              formdata1.append("organized", $("#organized").val());
+              formdata1.append("scheme", $("#scheme").val());
+              formdata1.append("topic", $("#topic").val());
+              formdata1.append("summary", $("#summary").val());
+              formdata1.append("image1", $("#image1")[0].files[0]);
+              formdata1.append("image2", $("#image2")[0].files[0]);
+              formdata1.append("image3", $("#image3")[0].files[0]);
+              formdata1.append("image4", $("#image4")[0].files[0]);
+              formdata1.append("image5", $("#image5")[0].files[0]);
+              formdata1.append("image6", $("#image6")[0].files[0]);
+              //
+              $.ajax({
+                type: "POST",
+                url: "./assets/php/addEvent.php",
+                data: formdata1,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                  console.log(data);
+                  if (data == 1) {
+                    alert("event stored");
+                    $(".addBtn").html('<i class="fa fa-plus"></i> Add');
+                    $("#frm")[0].reset();
+                  } else {
+                    alert("failed to store event");
+                    $(".addBtn").html('<i class="fa fa-plus"></i> Add');
+                  }
+                },
+                error: (err) => {
+                  alert("oops something went wrong ", err.status);
+                  console.log(err);
+                },
+              });
+            } else {
+              alert("Please Enter The Required Fields");
+            }
+          } //file if
+          else {
+            $(".addBtn").html("Loading...");
+            ///
+            var formdata = new FormData();
+            formdata.append("file", FileExcelFile);
+
+            $.ajax({
+              method: "post",
+              url: "./assets/php/addEventThroughExcel.php",
+              data: formdata,
+              contentType: false,
+              processData: false,
+              success: (data) => {
+                if (data == 1) {
+                  $("#file").val("");
+                  $(".fileName").html(" ");
+                  $(".addBtn").html('<i class="fa fa-plus"></i> Add');
+                  alert("event stored");
+                } else {
+                  $(".addBtn").html('<i class="fa fa-plus"></i> Add');
+                  alert("failed to store event");
+                }
+              },
+              error: (err) => {
+                alert("oops something went wrong " + err.statusText);
+                console.log(err);
+              },
+            });
+          }
+        }); //btn
+
+        $("#file").change(() => {
+          $(".fileName").html($("#file").val());
+          FileExcelFile = $("#file")[0].files[0];
+        });
+      });
+    </script>
+  </body>
+</html>
