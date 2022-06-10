@@ -156,8 +156,37 @@
             }
 
             var mainElement = document.createElement("section");
-
             if (
+              imageStatus[0] == false &&
+              imageStatus[1] == false &&
+              imageStatus[2] == false &&
+              imageStatus[3] == false &&
+              imageStatus[4] == false &&
+              imageStatus[5] == false
+            ) {
+              mainElement.innerHTML = `
+            <br>
+                 <button title='export as word doc' class='word' onclick="ExportToDoc('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-word-o'></i></button>
+                 &nbsp;
+                <button title='export as pdf' class='pdf' onclick="ExportToPdf('event${event.id}','${event.program} ${event.date}');" ><i class='fa fa-file-pdf-o'></i></button>
+                 &nbsp; <button title='delete this event' class='delete' repId='${event.id}'><i class='fa fa-trash'></i></button>&nbsp;
+                    <div id="event${event.id}" class='event event${event.id}'>
+                <p align="justify">
+                  On <b>${event.date}</b>  ,
+                  <b>${event.organizedby}</b>  Organized a programme on
+                  <b>${event.program}</b>  under the scheme <b>${event.scheme}</b>  ,
+                  <b>${event.guest}</b>  was the chief guest and delivers a speech on
+                  <b>${event.topic}</b>  . <b>${event.students}</b>  students participated in the
+                  programme
+                </p>
+                <p align="center">${event.summary}</p>
+                <br>
+                <hr>
+                
+               
+              </div>
+            `;
+            } else if (
               imageStatus[0] == true &&
               imageStatus[1] == false &&
               imageStatus[2] == false &&
